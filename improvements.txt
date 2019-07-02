@@ -1,0 +1,5 @@
+List of improvements that I made:
+	- Fixed my grammar mistakes
+	- Make a list of restaurant on the left of my screen
+	- Detail the way from the user's location to the closest the parking lot: Turn left, turn right
+	- Make a form for user to input new locations

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <script type='text/javascript'
+        src='https://www.bing.com/api/maps/mapcontrol?key=AkNLq-hYOX6jnAihcHI40-nRV9FwMrEkR66--gAgcIf4HW26awCEOBsZb43HnYjt '></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Segoe UI', Helvetica, Arial, Sans-Serif;
+        }
+
+        .navbar {
+            margin-bottom: 0;
+            border-radius: 0;
+        }
+
+        /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+        .row.content {
+            height: 700px;
+        }
+
+        .info-box {
+            width: 280px;
+            height: 80px;
+            margin: 20px;
+            background-color: rgb(0, 136, 122);
+            text-align: center;
+            visibility: visible;
+        }
+
+        #goBack {
+            margin: 20px;
+            display: none;
+        }
+
+        .info-box h5 {
+            padding-top: 35px;
+            color: white;
+        }
+
+        #userParking {
+            display: none;
+        }
+
+        #printoutPanel {
+
+            max-height: 500px;
+            display: none;
+            
+        }
+
+        #myMap {
+            float: right;
+        }
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Button used to open the contact form - fixed at the bottom of the page */
+        .open-button {
+            background-color: #555;
+            color: white;
+            padding: 16px 20px;
+            border: none;
+            cursor: pointer;
+            opacity: 0.8;
+            position: fixed;
+            bottom: 23px;
+            right: 28px;
+            width: 280px;
+        }
+
+        /* The popup form - hidden by default */
+        .form-popup {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            right: 500px;
+            border: 3px solid #f1f1f1;
+            z-index: 9;
+        }
+
+        /* Add styles to the form container */
+        .form-container {
+            max-width: 300px;
+            padding: 10px;
+            background-color: white;
+        }
+
+        /* Full-width input fields */
+        .form-container input[type=text],
+        .form-container input[type=password] {
+            width: 100%;
+            padding: 15px;
+            margin: 5px 0 22px 0;
+            border: none;
+            background: #f1f1f1;
+        }
+
+        /* When the inputs get focus, do something */
+        .form-container input[type=text]:focus,
+        .form-container input[type=password]:focus {
+            background-color: #ddd;
+            outline: none;
+        }
+
+        /* Set a style for the submit/login button */
+        .form-container .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 16px 20px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+
+        /* Add a red background color to the cancel button */
+        .form-container .cancel {
+            background-color: red;
+        }
+
+        /* Add some hover effects to buttons */
+        .form-container .btn:hover,
+        .open-button:hover {
+            opacity: 1;
+        }
+
+        
+
+
+
+        @media only screen and (max-width: 900px) {
+            #showAll {
+                display: none;
+            }
+
+            #searchParking {
+                display: none;
+            }
+
+            #help {
+                display: none;
+            }
+
+            #about {
+                display: none;
+            }
+
+            #userParking {
+                display: block;
+            }
+			#myMap{
+			float: left;}
+        }
+    </style>
+    <script src="myScript.js"></script>
+
+</head>
+
+<body onload='loadMapScenario();'>
+    <header>
+        <nav class="navbar navbar-inverse">
+
+            <div class="container-fluid">
+                <div class="navbar-header">
+
+                    <a class="navbar-brand" href="#">ParkingLotsHamilton</a>
+                    <a class="navbar-brand" id="userParking">Get User Location</a>
+                </div>
+
+                <form class="navbar-form navbar-left">
+                    <div class="input-group mx-auto">
+                        <div id='searchBoxContainer'><input type="text" class="form-control" placeholder="Search"
+                                name="search" id='searchBox'>
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit">
+                                    <i class="glyphicon glyphicon-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                </form>
+                
+
+            </div>
+            
+        </nav>
+    </header>
+
+    <div class="container-fluid" style="margin-top: 20px">
+        <div class="col-lg-3" id="side-menu">
+            <div class="center-block info-box" id="showAll">
+                <h5>Discover all parkinglots in Hamilton</h5>
+            </div>
+            <div class="center-block info-box" id="searchParking">
+                <h5>Search parkinglots close to you</h5>
+            </div>
+            <div class="center-block info-box" id="help" onclick="openForm()">
+                <h5>Help your community</h5>
+            </div>
+            <button type="button" id="goBack" class="btn btn-primary">Go Back</button>
+            <div id="listRestaurant" class="container media center-block"></div>
+            <div id="printoutPanel" class="center-block "></div>
+
+        </div>
+        <div class="row content col-lg-8" id='myMap'>
+        </div>
+        <div class="form-popup" id="myForm">
+            <form class="form-container">
+                <h1>New Parking Lots</h1>
+
+                <label for="name"><b>Name</b></label>
+                <input type="text" placeholder="Enter Name" name="name" required>
+
+                <label for="address"><b>Address</b></label>
+                <input type="text" placeholder="Enter Address" name="address" required>
+
+                <label for="longitude"><b>Longitude</b></label>
+                <input type="text" placeholder="Enter Longitude" name="longitude">
+
+                <label for="latitude"><b>Latitude</b></label>
+                <input type="text" placeholder="Enter Latitude" name="latitude">
+
+                <button type="submit" class="btn" onclick="closeForm()">Send</button>
+
+            </form>
+        </div>
+    </div>
+
+
+
+</body>
